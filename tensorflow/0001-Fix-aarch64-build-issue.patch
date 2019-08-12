@@ -1,0 +1,40 @@
+From ea4e02a8d98e0a3a9f76d742b7ff8929683c33b3 Mon Sep 17 00:00:00 2001
+From: Guo Feng <feng.guo@nxp.com>
+Date: Wed, 31 Jul 2019 10:25:01 +0800
+Subject: [PATCH] Fix aarch64 build issue
+
+---
+ tensorflow/contrib/lite/kernels/internal/BUILD | 1 -
+ third_party/aws.BUILD                          | 4 +++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/contrib/lite/kernels/internal/BUILD b/tensorflow/contrib/lite/kernels/internal/BUILD
+index afb5ec0..4a45afe 100644
+--- a/tensorflow/contrib/lite/kernels/internal/BUILD
++++ b/tensorflow/contrib/lite/kernels/internal/BUILD
+@@ -21,7 +21,6 @@ HARD_FP_FLAGS_IF_APPLICABLE = select({
+ NEON_FLAGS_IF_APPLICABLE = select({
+     ":arm": [
+         "-O3",
+-        "-mfpu=neon",
+     ],
+     ":armeabi-v7a": [
+         "-O3",
+diff --git a/third_party/aws.BUILD b/third_party/aws.BUILD
+index 5426f79..e4fcbdd 100644
+--- a/third_party/aws.BUILD
++++ b/third_party/aws.BUILD
+@@ -24,7 +24,9 @@ cc_library(
+         "@org_tensorflow//tensorflow:raspberry_pi_armeabi": glob([
+             "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+         ]),
+-        "//conditions:default": [],
++        "//conditions:default":  glob([
++            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
++        ]),
+     }) + glob([
+         "aws-cpp-sdk-core/include/**/*.h",
+         "aws-cpp-sdk-core/source/*.cpp",
+--
+2.7.4
+
