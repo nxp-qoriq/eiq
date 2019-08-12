@@ -1,0 +1,58 @@
+From 14335cde9eb122a0bd1c327d5e63466f41cc8c38 Mon Sep 17 00:00:00 2001
+From: Feng Guo <feng.guo@nxp.com>
+Date: Mon, 12 Aug 2019 08:45:58 +0000
+Subject: [PATCH] Add build script for aarch64
+
+---
+ tensorflow/contrib/lite/tools/make/Makefile   |  5 +++++
+ .../lite/tools/make/build_aarch64_lib.sh      | 22 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100755 tensorflow/contrib/lite/tools/make/build_aarch64_lib.sh
+
+diff --git a/tensorflow/contrib/lite/tools/make/Makefile b/tensorflow/contrib/lite/tools/make/Makefile
+index 16012a3..30e0761 100644
+--- a/tensorflow/contrib/lite/tools/make/Makefile
++++ b/tensorflow/contrib/lite/tools/make/Makefile
+@@ -114,6 +114,11 @@ CORE_CC_EXCLUDE_SRCS += \
+ tensorflow/contrib/lite/mmap_allocation.cc \
+ tensorflow/contrib/lite/nnapi_delegate.cc
+ endif
++
++ifeq ($(BUILD_WITH_NNAPI),false)
++CORE_CC_EXCLUDE_SRCS += tensorflow/contrib/lite/nnapi_delegate.cc
++CORE_CC_ALL_SRCS += tensorflow/contrib/lite/nnapi_delegate_disabled.cc
++endif
+ # Filter out all the excluded files.
+ TF_LITE_CC_SRCS := $(filter-out $(CORE_CC_EXCLUDE_SRCS), $(CORE_CC_ALL_SRCS))
+ 
+diff --git a/tensorflow/contrib/lite/tools/make/build_aarch64_lib.sh b/tensorflow/contrib/lite/tools/make/build_aarch64_lib.sh
+new file mode 100755
+index 0000000..df10368
+--- /dev/null
++++ b/tensorflow/contrib/lite/tools/make/build_aarch64_lib.sh
+@@ -0,0 +1,22 @@
++#!/bin/bash -x
++# Copyright 2017 The TensorFlow Authors. All Rights Reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++# ==============================================================================
++
++set -e
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++cd "$SCRIPT_DIR/../../../../.."
++
++CC_PREFIX=aarch64-linux-gnu- make -j 3 -f tensorflow/contrib/lite/tools/make/Makefile TARGET=aarch64 TARGET_ARCH=armv8-a BUILD_WITH_NNAPI=false 
+-- 
+2.17.1
+
