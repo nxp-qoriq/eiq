@@ -1,5 +1,12 @@
 #!/bin/bash -e
 
+# Copyright 2019 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Author: Barry Cao <barry.cao@nxp.com>
+#
+
 # install the dependencies
 apt-get update
 sudo apt-get install -y libgtk2.0-dev pkg-config cmake python-dev python
@@ -7,7 +14,6 @@ if [ $? -ne 0 ]; then
     echo "apt-get install failed" 
     exit 
 fi
-
 # git clone opencv source code
 git clone https://source.codeaurora.org/external/imx/opencv-imx
 cd ./opencv-imx
@@ -33,7 +39,7 @@ cmake .. \
     -DCMAKE_INSTALL_PREFIX=/usr/local
 
 # start compile
-make -j4
+make -j $JOBS
 
 # install
 make install

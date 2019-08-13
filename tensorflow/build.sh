@@ -1,5 +1,12 @@
 #!/bin/bash -e
 
+# Copyright 2019 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Author: Feng Guo <feng.guo@nxp.com>
+#
+
 BUILD_DIR=`pwd`
 echo "Start building in $BUILD_DIR"
 
@@ -24,7 +31,7 @@ cd protobuf
 git checkout -b v3.5 origin/3.5.x
 ./autogen.sh
 ./configure --prefix=/usr/local
-make -j4
+make -j $JOBS
 make install
 
 # build bazel
@@ -55,7 +62,7 @@ export TF_DOWNLOAD_CLANG=0
 export TF_NEED_MPI=0
 export TF_SET_ANDROID_WORKSPACE=0
 ./configure
-bazel build --jobs=4 --config=opt --verbose_failures //tensorflow/tools/pip_package:build_pip_package
+bazel build --jobs=$JOBS --config=opt --verbose_failures //tensorflow/tools/pip_package:build_pip_package
 mkdir target
 ./bazel-bin/tensorflow/tools/pip_package/build_pip_package ./target
 pip install ./target/tensorflow-1.12.3-cp27-cp27mu-linux_aarch64.whl

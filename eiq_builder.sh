@@ -1,11 +1,19 @@
-#!/bin/bash
+#!/bin/bash -e
 
-ARGS=`getopt -o h -l "with-tflite,with-tensorflow,with-opencv,help" -- "$@"`
+# Copyright 2019 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Author: Feng Guo <feng.guo@nxp.com>
+#
+
+ARGS=`getopt -o h,j: -l "jobs:,with-tflite,with-tensorflow,with-opencv,help" -- "$@"`
 eval set -- "${ARGS}"
 
 BUILD_TFLITE=false
 BUILD_TENSORFLOW=false
 BUILD_OPENCV=false
+JOBS=8
 
 while true;
 do
@@ -25,10 +33,15 @@ do
             BUILD_OPENCV=true
             shift 1
             ;;
+        -j|--jobs)
+	    JOBS=$2
+            shift 2
+	    ;;
         -h|--help)
-            echo "Usage: eiq_builder.sh [OPTION]"
+            echo "Usage: $0 [OPTION]"
             echo "Build the AI framework"
             echo ""
+            echo "Options:"
             echo "   --with-tflite       build with tflite"
             echo "   --with-tensorflow   build with tensorflow"
             echo "   --with-opencv       build with opencv"
@@ -41,11 +54,17 @@ do
             break
             ;;
         *)
-            echo "Internal error!"
+            echo "unrecognized option $1!"
             exit 1
             ;;
     esac
 done
+
+if ! ( $BUILD_TFLITE || $BUILD_TENSORFLOW || $BUILD_OPENCV ) ; then
+    echo "$0: missing optstring argument"
+    echo "Try '$0 --help' for more information."
+    exit 1
+fi
 
 TOP=`pwd`
 if ( $BUILD_TFLITE ); then
