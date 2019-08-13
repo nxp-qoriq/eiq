@@ -1,16 +1,14 @@
-export http_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
-export ftp_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
-export https_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
+#!/bin/bash -e
 
 BUILD_DIR=`pwd`
 echo "Start building in $BUILD_DIR"
 
+# install the dependencies
 apt-get update
 apt-get install -y git zip unzip autoconf automake libtool curl zlib1g-dev maven swig bzip2
 apt-get install -y openjdk-8-jdk wget
 apt-get install -y python-numpy python-dev python-pip python-wheel python-h5py
-pip install enum34 mock keras_applications keras_preprocessing
-
+pip install enum34 mock keras_applications==1.0.8 keras_preprocessing==1.1.0
 
 
 JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64
@@ -19,7 +17,8 @@ CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
 PATH=${JAVA_HOME}/bin:$PATH
 GIT_SSL_NO_VERIFY=1
 
-
+# build proto buffer
+cd $BUILD_DIR
 git clone https://github.com/google/protobuf.git
 cd protobuf
 git checkout -b v3.5 origin/3.5.x
@@ -28,8 +27,8 @@ git checkout -b v3.5 origin/3.5.x
 make -j4
 make install
 
+# build bazel
 cd $BUILD_DIR
-
 mkdir bazel
 cd bazel
 wget https://github.com/bazelbuild/bazel/releases/download/0.15.0/bazel-0.15.0-dist.zip
@@ -37,8 +36,8 @@ unzip bazel-0.15.0-dist.zip
 ./compile.sh
 cp output/bazel /usr/bin/
 
+# build tensorflow
 cd $BUILD_DIR
-
 wget https://github.com/tensorflow/tensorflow/archive/v1.12.3.tar.gz
 tar xvf v1.12.3.tar.gz
 cd tensorflow-1.12.3

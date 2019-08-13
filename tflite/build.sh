@@ -1,13 +1,13 @@
-export http_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
-export ftp_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
-export https_proxy="http://wbi\nxf42681:Welcome%402017@apac.nics.nxp.com:8080"
+#!/bin/bash -e
 
 BUILD_DIR=`pwd`
 echo "Start building in $BUILD_DIR"
 
+# install the dependencies
 apt-get update
 apt-get install -y build-essential
 
+# build tensorflow lite
 wget https://github.com/tensorflow/tensorflow/archive/v1.12.3.tar.gz
 tar xvf v1.12.3.tar.gz
 cd tensorflow-1.12.3
