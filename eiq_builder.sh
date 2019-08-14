@@ -7,12 +7,13 @@
 # Author: Feng Guo <feng.guo@nxp.com>
 #
 
-ARGS=`getopt -o h,j: -l "jobs:,with-tflite,with-tensorflow,with-opencv,help" -- "$@"`
+ARGS=`getopt -o h,j: -l "jobs:,with-tflite,with-tensorflow,with-opencv,with-armnn,help" -- "$@"`
 eval set -- "${ARGS}"
 
 BUILD_TFLITE=false
 BUILD_TENSORFLOW=false
 BUILD_OPENCV=false
+BUILD_ARMNN=false
 JOBS=8
 
 while true;
@@ -31,6 +32,11 @@ do
         --with-opencv)
             echo "build with opencv"
             BUILD_OPENCV=true
+            shift 1
+            ;;
+        --with-armnn)
+            echo "build with armnn"
+            BUILD_ARMNN=true
             shift 1
             ;;
         -j|--jobs)
@@ -60,7 +66,7 @@ do
     esac
 done
 
-if ! ( $BUILD_TFLITE || $BUILD_TENSORFLOW || $BUILD_OPENCV ) ; then
+if ! ( $BUILD_TFLITE || $BUILD_TENSORFLOW || $BUILD_OPENCV || $BUILD_ARMNN) ; then
     echo "$0: missing optstring argument"
     echo "Try '$0 --help' for more information."
     exit 1
@@ -82,6 +88,12 @@ fi
 if ( $BUILD_OPENCV ); then
     echo "Start building opencv"
     cd opencv
+    source build.sh
+    cd $TOP
+fi
+if ( $BUILD_ARMNN ); then
+    echo "Start building opencv"
+    cd armnn
     source build.sh
     cd $TOP
 fi
