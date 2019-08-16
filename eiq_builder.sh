@@ -64,8 +64,10 @@ do
             echo "   --with-tflite       build with tflite"
             echo "   --with-tensorflow   build with tensorflow"
             echo "   --with-opencv       build with opencv"
+            echo "   --with-armnn        build with armnn"
             echo "   --skip-dependency   do not install dependency before building"
             echo "-c --clean             cleanup build env before building"
+            echo "-j --jobs              the number of jobs for building, default is 8"
             echo ""
             echo "-h --help    display this help and exit"
             exit 0
