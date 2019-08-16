@@ -197,6 +197,14 @@ function do_compile_tensorflow_protobuf() {
     cd $BASEDIR
     if [ ! -d armnn ]; then
         git clone --branch $ARMNN_BRANCH $ARMNN_GIT
+        cd armnn
+        git am $SRCDIR/0001-stdlib-issue-work-around.patch
+        #git am $SRCDIR/0002-enable-use-of-boost-shared-library.patch
+        git am $SRCDIR/0003-add-more-test-command-line-arguments.patch
+        git am $SRCDIR/0004-generate-versioned-library.patch
+        git am $SRCDIR/0005-add-armnn-mobilenet-test-example.patch
+        git am $SRCDIR/0006-armnn-mobilenet-test-example.patch
+        git am $SRCDIR/0007-enable-use-of-arm-compute-shared-library.patch
     fi
     #4. download Tensorflow protobuf library
     cd $BASEDIR/
