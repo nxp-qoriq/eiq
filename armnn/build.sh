@@ -44,6 +44,25 @@ function do_compile_stb() {
     fi
 }
 
+function do_install_armcl() {
+    CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
+    install -d $INSTALL_DIR/include
+
+    cp $CP_ARGS arm_compute $INSTALL_DIR/include
+    cp $CP_ARGS support $INSTALL_DIR/include
+    cp $CP_ARGS include/half $INSTALL_DIR/include
+
+    install -d $INSTALL_DIR/lib
+    install -m 0755 build/libarm_compute*.so $INSTALL_DIR/lib
+
+    install -d $INSTALL_DIR/bin
+    for item in build/examples/*; do
+        if [ -x $item ]; then
+            install -m 0555 $item $INSTALL_DIR/bin
+        fi
+    done
+}
+
 function do_compile_armcl() {
     cd $BASEDIR
     if [ ! -d ComputeLibrary ]; then
@@ -97,7 +116,7 @@ function do_compile_protobuf() {
         CC=aarch64-linux-gnu-gcc \
             CXX=aarch64-linux-gnu-g++ \
             ../configure --host=aarch64-linux \
-            --prefix=$BASEDIR/armnn-devenv/google/arm64_pb_install \
+            --prefix=$INSTALL_DIR \
             --with-protoc=$BASEDIR/armnn-devenv/google/host_64_pb_install/bin/protoc
         make install -j$JOBS
     fi
@@ -193,7 +212,6 @@ function do_compile_tensorflow_protobuf() {
 
 function do_compile_armnn() {
     # build armnn
-    #-DBUILD_SHARED_LIBS=ON
     cd $BASEDIR/
     if [ -d armnn ]; then
         cd armnn && mkdir -p build && cd build && \
@@ -202,11 +220,12 @@ function do_compile_armnn() {
             cmake .. \
             -DBUILD_TESTS=1 \
             -DBUILD_UNIT_TESTS=1 \
+            -DBUILD_SHARED_LIBS=ON \
             -DARMCOMPUTE_ROOT=$BASEDIR/ComputeLibrary \
             -DARMCOMPUTE_BUILD_DIR=$BASEDIR/ComputeLibrary/build/ \
             -DBOOST_ROOT=$BASEDIR/armnn-devenv/boost_arm64_install/ \
             -DTF_GENERATED_SOURCES=$BASEDIR/tensorflow-protobuf \
-            -DPROTOBUF_ROOT=$BASEDIR/armnn-devenv/google/arm64_pb_install/ \
+            -DPROTOBUF_ROOT=$INSTALL_DIR/ \
             -DBUILD_TF_LITE_PARSER=1 \
             -DTF_LITE_GENERATED_PATH=$BASEDIR/tensorflow/tensorflow/lite/schema \
             -DFLATBUFFERS_ROOT=$BASEDIR/flatbuffers \
@@ -216,8 +235,8 @@ function do_compile_armnn() {
             -DBUILD_TF_PARSER=1 \
             -DCAFFE_GENERATED_SOURCES=$BASEDIR/caffe/build/src \
             -DBUILD_CAFFE_PARSER=1 \
-            -DPROTOBUF_LIBRARY_DEBUG=$BASEDIR/armnn-devenv/google/arm64_pb_install/lib/libprotobuf.so.15.0.0 \
-            -DPROTOBUF_LIBRARY_RELEASE=$BASEDIR/armnn-devenv/google/arm64_pb_install/lib/libprotobuf.so.15.0.0 \
+            -DPROTOBUF_LIBRARY_DEBUG=$INSTALL_DIR/lib/libprotobuf.so.15.0.0 \
+            -DPROTOBUF_LIBRARY_RELEASE=$INSTALL_DIR/lib/libprotobuf.so.15.0.0 \
             -DBUILD_ONNX_PARSER=1 \
             -DONNX_GENERATED_SOURCES=$BASEDIR/onnx \
             -DTHIRD_PARTY_INCLUDE_DIRS=$BASEDIR/stb \
@@ -228,6 +247,7 @@ function do_compile_armnn() {
             mkdir -p $INSTALL_DIR/bin
         fi
         find $BASEDIR/armnn/build/tests -maxdepth 1 -type f -executable -exec cp $CP_ARGS {} $INSTALL_DIR/bin \;
+        cp $CP_ARGS $BASEDIR/armnn/build/UnitTests  $INSTALL_DIR/bin
     fi
 }
 
@@ -287,5 +307,5 @@ fi
 if ( $DO_BUILD ) || [ $# -eq 0 ] ; then
     echo "Start Build ArmNN ... "
     do_build
+    echo "Done."
 fi
-
