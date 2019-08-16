@@ -52,7 +52,7 @@ index 0000000..df10368
 +SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 +cd "$SCRIPT_DIR/../../../../.."
 +
-+CC_PREFIX=aarch64-linux-gnu- make -j $JOBS -f tensorflow/contrib/lite/tools/make/Makefile TARGET=aarch64 TARGET_ARCH=armv8-a BUILD_WITH_NNAPI=false 
++make -j $JOBS -f tensorflow/contrib/lite/tools/make/Makefile TARGET=aarch64 TARGET_ARCH=armv8-a BUILD_WITH_NNAPI=false CC_PREFIX=aarch64-linux-gnu-
 -- 
 2.17.1
 

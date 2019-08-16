@@ -13,6 +13,7 @@ echo "Start building in $BUILD_DIR"
 # install the dependencies
 apt-get update
 apt-get install -y build-essential
+apt-get install -y wget zip unzip curl
 
 # build tensorflow lite
 wget https://github.com/tensorflow/tensorflow/archive/v1.12.3.tar.gz
