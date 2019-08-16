@@ -8,13 +8,8 @@
 #
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-DO_PRINT_HELP=0
-DO_CLEANUP=0
-DO_BUILD=0
+DO_PRINT_HELP=false
 INSTALL_DIR=/usr/local
-
-set -euo pipefail
-#set -x
 
 # source code & git tree and branch
 ARMCL_GIT="https://github.com/Arm-software/ComputeLibrary.git"
@@ -33,7 +28,6 @@ ARMNN_GIT="https://github.com/ARM-software/armnn.git"
 ARMNN_BRANCH="v19.02"
 
 function do_install_dependency() {
-    apt-get update
     apt-get install -y libleveldb-dev libsnappy-dev libhdf5-serial-dev #libopencv-dev
     apt-get install -y --no-install-recommends libboost-all-dev
     apt-get install -y libgflags-dev libgoogle-glog-dev liblmdb-dev
@@ -258,7 +252,6 @@ function do_build() {
         mkdir -p $INSTALL_DIR
     fi
 
-    do_install_dependency
     do_compile_stb
     do_compile_armcl
     do_compile_bootst
@@ -280,25 +273,18 @@ function do_print_help() {
        -h: print this info";
 }
 
-while [ $# -ge 1 ]; do
-    case "$1" in
-        -h) DO_PRINT_HELP=1; shift 1;;
-        -t) JOBS=$2; shift 2;;
-        -c) DO_CLEANUP=1; shift 1;;
-        -b) DO_BUILD=1; shift 1;;
-        -d) INSTALL_DIR=$2; shift 2;;
-        *) echo "unknow parameter $1"; do_print_help; exit 1; break;;
-    esac
-done
+if ( $DO_INSTALL_DEPENDENCY ); then
+    do_install_dependency
+fi
 
-if [ $DO_PRINT_HELP -eq 1 ]; then
+if ( $DO_PRINT_HELP ); then
     do_print_help
     exit 0
 fi
-if [ $DO_CLEANUP -eq 1 ]; then
+if ( $DO_CLEANUP ); then
     do_cleanup
 fi
-if [ $DO_BUILD -eq 1 ] || [ $# -eq 0 ] ; then
+if ( $DO_BUILD ) || [ $# -eq 0 ] ; then
     echo "Start Build ArmNN ... "
     do_build
 fi

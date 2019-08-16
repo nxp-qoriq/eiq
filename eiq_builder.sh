@@ -6,8 +6,10 @@
 #
 # Author: Feng Guo <feng.guo@nxp.com>
 #
+set -euo pipefail
 
-ARGS=`getopt -o h,j: -l "jobs:,with-tflite,with-tensorflow,with-opencv,with-armnn,help" -- "$@"`
+ARGS=`getopt -o c,h,j: -l "clean,jobs:,with-tflite,with-tensorflow,
+                           with-opencv,with-armnn,skip-dependency,help" -- "$@"`
 eval set -- "${ARGS}"
 
 BUILD_TFLITE=false
@@ -15,6 +17,9 @@ BUILD_TENSORFLOW=false
 BUILD_OPENCV=false
 BUILD_ARMNN=false
 JOBS=8
+DO_CLEANUP=false
+DO_BUILD=true
+DO_INSTALL_DEPENDENCY=true
 
 while true;
 do
@@ -40,9 +45,17 @@ do
             shift 1
             ;;
         -j|--jobs)
-	    JOBS=$2
+            JOBS=$2
             shift 2
-	    ;;
+            ;;
+        -c|--clean)
+            DO_CLEANUP=true
+            shift 1
+            ;;
+        --skip-dependency)
+            DO_INSTALL_DEPENDENCY=false
+            shift 1
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTION]"
             echo "Build the AI framework"
@@ -51,6 +64,8 @@ do
             echo "   --with-tflite       build with tflite"
             echo "   --with-tensorflow   build with tensorflow"
             echo "   --with-opencv       build with opencv"
+            echo "   --skip-dependency   do not install dependency before building"
+            echo "-c --clean             cleanup build env before building"
             echo ""
             echo "-h --help    display this help and exit"
             exit 0
@@ -67,9 +82,13 @@ do
 done
 
 if ! ( $BUILD_TFLITE || $BUILD_TENSORFLOW || $BUILD_OPENCV || $BUILD_ARMNN) ; then
-    echo "$0: missing optstring argument"
+    echo "$0: please select one or more framework(s) to build"
     echo "Try '$0 --help' for more information."
     exit 1
+fi
+
+if ( $DO_INSTALL_DEPENDENCY ); then
+    apt-get update
 fi
 
 TOP=`pwd`
