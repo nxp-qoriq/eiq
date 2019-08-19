@@ -16,7 +16,7 @@ BUILD_TFLITE=false
 BUILD_TENSORFLOW=false
 BUILD_OPENCV=false
 BUILD_ARMNN=false
-JOBS=8
+JOBS=4
 DO_CLEANUP=false
 DO_BUILD=true
 DO_INSTALL_DEPENDENCY=true
@@ -67,7 +67,7 @@ do
             echo "   --with-armnn        build with armnn"
             echo "   --skip-dependency   do not install dependency before building"
             echo "-c --clean             cleanup build env before building"
-            echo "-j --jobs              the number of jobs for building, default is 8"
+            echo "-j --jobs              the number of jobs for building, default is 4"
             echo ""
             echo "-h --help    display this help and exit"
             exit 0
