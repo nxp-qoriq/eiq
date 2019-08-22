@@ -26,7 +26,9 @@ function do_build() {
     source tensorflow/contrib/lite/tools/make/download_dependencies.sh
     source tensorflow/contrib/lite/tools/make/build_aarch64_lib.sh
     cp tensorflow/contrib/lite/tools/make/gen/aarch64_armv8-a/lib/*.a /usr/local/lib
-    cp tensorflow/contrib/lite/tools/make/gen/aarch64_armv8-a/bin/* /usr/local/bin
+    mkdir -p /usr/share/tflite
+    cp tensorflow/contrib/lite/tools/make/gen/aarch64_armv8-a/bin/* /usr/share/tflite
+    cp tensorflow/examples/label_image/data/grace_hopper.jpg /usr/share/tflite
 }
 
 function do_cleanup() {

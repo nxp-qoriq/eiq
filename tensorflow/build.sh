@@ -79,6 +79,9 @@ function do_build_tensorflow() {
     bazel build --jobs=$JOBS --config=opt --verbose_failures //tensorflow/tools/pip_package:build_pip_package
     ./bazel-bin/tensorflow/tools/pip_package/build_pip_package ./target
     pip install ./target/tensorflow-1.12.3-cp27-cp27mu-linux_aarch64.whl
+    mkdir -p /usr/share/tensorflow
+    cp tensorflow/examples/label_image/label_image.py /usr/share/tensorflow
+    cp tensorflow/examples/label_image/data/grace_hopper.jpg /usr/share/tensorflow
 }
 
 function do_build() {
