@@ -71,8 +71,9 @@ function do_compile_armcl() {
     if [ -d ComputeLibrary ]; then
         echo "building ARM Compute Library..."
         cd ComputeLibrary && \
-            scons arch=arm64-v8a neon=1  extra_cxx_flags="-fPIC" \
+            scons arch=arm64-v8a neon=1 opencl=0 extra_cxx_flags="-fPIC" \
             benchmark_tests=0 validation_tests=0 -j$JOBS
+        do_install_armcl
     fi
 }
 
