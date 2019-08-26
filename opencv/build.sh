@@ -10,7 +10,7 @@
 
 function do_install_dependency() {
     # install the dependencies
-    apt-get install -y libgtk2.0-dev pkg-config cmake python-dev python
+    apt-get install -y libgtk2.0-dev pkg-config cmake python-dev python libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev
 }
 
 function do_build() {
