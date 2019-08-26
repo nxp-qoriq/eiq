@@ -15,7 +15,7 @@ function do_install_dependency() {
 
 function do_build() {
     # git clone opencv source code
-    if [ ! -d stb ]; then
+    if [ ! -d "opencv-imx" ]; then
         git clone https://source.codeaurora.org/external/imx/opencv-imx
         cd ./opencv-imx
         git branch -a
@@ -26,11 +26,11 @@ function do_build() {
 
     # start compile configure
     mkdir build;cd build
-    mkdir install
+    INSTALL_DIR=/usr/share/OpenCV/samples
+    mkdir -p ${INSTALL_DIR}
     cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_opencv_python2=ON  \
-        -DINSTALL_PYTHON_EXAMPLES=ON \
         -DBUILD_opencv_python3=OFF \
         -DWITH_GTK=ON  \
         -DWITH_GTK_2_X=ON  \
@@ -39,13 +39,18 @@ function do_build() {
         -DINSTALL_TESTS=ON  \
         -DBUILD_EXAMPLES=ON \
         -DBUILD_opencv_apps=ON \
-        -DCMAKE_INSTALL_PREFIX=/usr/local
+        -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
 
     # start compile
     make -j $JOBS
 
     # install
     make install
+
+    # install examples and extra dependencies
+    cp -f bin/example_*_* ${INSTALL_DIR}/bin/
+    cp ../samples/dnn/models.yml ${INSTALL_DIR}/bin/
+    cp -r ../samples/data/ ${INSTALL_DIR}
 }
 
 if ( $DO_INSTALL_DEPENDENCY ); then

@@ -6,8 +6,7 @@
 #
 # Author: Yanan Yang <yanan.yang@nxp.com>
 #
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=
 DO_PRINT_HELP=false
 INSTALL_DIR=/usr/local
 
@@ -72,8 +71,9 @@ function do_compile_armcl() {
     if [ -d ComputeLibrary ]; then
         echo "building ARM Compute Library..."
         cd ComputeLibrary && \
-            scons arch=arm64-v8a neon=1  extra_cxx_flags="-fPIC" \
+            scons arch=arm64-v8a neon=1 opencl=0 extra_cxx_flags="-fPIC" \
             benchmark_tests=0 validation_tests=0 -j$JOBS
+        do_install_armcl
     fi
 }
 
@@ -198,13 +198,13 @@ function do_compile_tensorflow_protobuf() {
     if [ ! -d armnn ]; then
         git clone --branch $ARMNN_BRANCH $ARMNN_GIT
         cd armnn
-        git am $BASEDIR/0001-stdlib-issue-work-around.patch
+        git am $SRCDIR/0001-stdlib-issue-work-around.patch
         #git am $SRCDIR/0002-enable-use-of-boost-shared-library.patch
-        git am $BASEDIR/0003-add-more-test-command-line-arguments.patch
-        git am $BASEDIR/0004-generate-versioned-library.patch
-        git am $BASEDIR/0005-add-armnn-mobilenet-test-example.patch
-        git am $BASEDIR/0006-armnn-mobilenet-test-example.patch
-        git am $BASEDIR/0007-enable-use-of-arm-compute-shared-library.patch
+        git am $SRCDIR/0003-add-more-test-command-line-arguments.patch
+        git am $SRCDIR/0004-generate-versioned-library.patch
+        git am $SRCDIR/0005-add-armnn-mobilenet-test-example.patch
+        git am $SRCDIR/0006-armnn-mobilenet-test-example.patch
+        git am $SRCDIR/0007-enable-use-of-arm-compute-shared-library.patch
     fi
     #4. download Tensorflow protobuf library
     cd $BASEDIR/
@@ -273,6 +273,7 @@ function do_build() {
         mkdir -p armnn_build
     fi
 
+    SRCDIR=$(pwd)
     cd armnn_build
     BASEDIR=$(pwd)
 
