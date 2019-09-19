@@ -25,9 +25,16 @@ function do_build() {
     fi
 
     # start compile configure
-    mkdir build;cd build
+    if [ ! -d "build" ]; then
+        mkdir build
+    fi
+    cd build
+
     INSTALL_DIR=/usr/share/OpenCV/samples
-    mkdir -p ${INSTALL_DIR}
+    if [ ! -d "${INSTALL_DIR}" ]; then
+        mkdir -p ${INSTALL_DIR}
+    fi
+
     cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_opencv_python2=ON  \
