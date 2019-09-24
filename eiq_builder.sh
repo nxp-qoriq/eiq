@@ -21,6 +21,9 @@ DO_CLEANUP=false
 DO_BUILD=true
 DO_INSTALL_DEPENDENCY=true
 
+LD_LIBRARY_PATH_ORIG=$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH
+
 while true;
 do
     case "$1" in
@@ -118,3 +121,5 @@ if ( $BUILD_ARMNN ); then
     source build.sh
     cd $TOP
 fi
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH_ORIG
